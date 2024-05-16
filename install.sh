@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.1"
+SCRIPT_VERSION="1.0.2"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -90,13 +90,15 @@ function install_zoxide() {
 }
 
 function check_script_version() {
-    LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/main/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2)
-    INSTALLED_VERSION=$(cat ~/dotfiles/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2)
+    LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/main/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
+    INSTALLED_VERSION=$(cat ~/dotfiles/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
     
     # return 0 if the versions are the same
     if [ "$INSTALLED_VERSION" = "$LATEST_VERSION" ]; then
         return 0
     else
+        echo "Installed version: $INSTALLED_VERSION"
+        echo "Latest version: $LATEST_VERSION"
         return 1
     fi
 }
@@ -121,7 +123,7 @@ function last_patches() {
 function check_if_installed() {
     if [ -d ~/dotfiles ]; then
         echo "Dotfiles are already cloned"
-        if [ $(check_script_version) -eq 0 ]; then
+        if check_script_version; then
             echo "The script is up to date. Run anyway? (y/n)"
             read -p "Enter your choice: " CHOICE
             
