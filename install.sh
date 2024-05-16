@@ -90,15 +90,16 @@ function install_zoxide() {
 }
 
 function check_script_version() {
-    LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/main/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
+    LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/master/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
     INSTALLED_VERSION=$(cat ~/dotfiles/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
+    
+    echo "Installed version: $INSTALLED_VERSION"
+    echo "Latest version: $LATEST_VERSION"
     
     # return 0 if the versions are the same
     if [ "$INSTALLED_VERSION" = "$LATEST_VERSION" ]; then
         return 0
     else
-        echo "Installed version: $INSTALLED_VERSION"
-        echo "Latest version: $LATEST_VERSION"
         return 1
     fi
 }
@@ -140,7 +141,7 @@ function check_if_installed() {
             
             read -p "Install now? (y/n): " CHOICE
             if [ "$CHOICE" = "y" ]; then
-                bash ~/dotfiles/install.sh
+                bash ~/dotfiles/install.sh --skip-check
                 exit 0
             else
                 exit 0
@@ -150,7 +151,11 @@ function check_if_installed() {
 }
 
 # Script starts here
-check_if_installed
+if [ "$1" = "--skip-check" ]; then
+    echo "Skipping check..."
+else
+    check_if_installed
+fi
 
 echo "Updating repositories..."
 update_repos
