@@ -1,4 +1,7 @@
 #!/bin/bash
+
+SCRIPT_VERSION="1.0.0"
+
 # Detect the operating system
 if [ -f /etc/os-release ]; then
     . /etc/os-release
@@ -81,15 +84,48 @@ function install_zoxide() {
     curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 }
 
+function check_script_version() {
+    LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/main/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2)
+    
+    # return 0 if the versions are the same
+    if [ "$SCRIPT_VERSION" == "$LATEST_VERSION" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function last_patches() {
-    # Change shell
-    if [ "$SHELL" != "/bin/zsh" ]; then
+    if [ "$SHELL" != "/bin/zsh" ] && [ "$SHELL" != "/usr/bin/zsh" ]; then
         chsh -s $(which zsh)
+    else
+        echo "Shell is already set to Zsh"
     fi
     
-    # Copy .zshrc from dotfiles (overwrites existing .zshrc)
-    cp dotfiles/zsh/.zshrc ~/.zshrc
+    echo "Copying .zshrc..."
+    cp ~/dotfiles/zsh/.zshrc ~/.zshrc
 }
+
+function check_if_installed() {
+    if [ -d ~/dotfiles ]; then
+        echo "Dotfiles are already cloned"
+        if [check_script_version -eq 0]; then
+            echo "The script is up to date. Run anyway? (y/n)"
+            read -p "Enter your choice: " CHOICE
+            
+            if [ "$CHOICE" == "y" ]; then
+                return 0
+            else
+                exit 0
+            fi
+        else
+            echo "The script is outdated"
+        fi
+    fi
+}
+
+# Script starts here
+check_if_installed
 
 echo "Updating repositories..."
 update_repos
@@ -114,7 +150,12 @@ echo "Installing Zoxide..."
 install_zoxide
 
 echo "Downloading SSH key..."
-download_ssh_key
+# check if key already exists
+if [ -f ~/.ssh/authorized_keys ]; then
+    echo "authorized_keys already exists, skipping..."
+else
+    download_ssh_key
+fi
 
 echo "Running last patches..."
 last_patches
