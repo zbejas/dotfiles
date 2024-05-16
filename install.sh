@@ -111,7 +111,7 @@ function last_patches() {
         echo "Shell is already set to Zsh"
     fi
     
-    read -p "Do you want to overwrite the current .zshrc file? (y/n): " CHOICE
+    read -p "Do you want to overwrite the current .zshrc file? (y/N): " CHOICE
     
     if [ "$CHOICE" = "y" ]; then
         echo "Copying .zshrc..."
@@ -132,7 +132,7 @@ function check_if_installed() {
             
             echo "Dotfiles have been updated. Runnning the script..."
             
-            read -p "Install now? (y/n): " CHOICE
+            read -p "Install now? (y/N): " CHOICE
             if [ "$CHOICE" = "y" ]; then
                 bash ~/dotfiles/install.sh --skip-check
                 exit 0
