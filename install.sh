@@ -125,14 +125,7 @@ function check_if_installed() {
     if [ -d ~/dotfiles ]; then
         echo "Dotfiles are already cloned"
         if check_script_version; then
-            echo "The script is up to date. Run anyway? (y/n)"
-            read -p "Enter your choice: " CHOICE
-            
-            if [ "$CHOICE" = "y" ]; then
-                return 0
-            else
-                exit 0
-            fi
+            return 0
         else
             echo "The script is outdated"
             force_clone_dotfiles
