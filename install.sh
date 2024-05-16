@@ -91,14 +91,14 @@ function last_patches() {
     cp dotfiles/zsh/.zshrc ~/.zshrc
 }
 
-echo "Cloning dotfiles..."
-clone_dotfiles
-
 echo "Updating repositories..."
 update_repos
 
 echo "Installing packages..."
 install_packages
+
+echo "Cloning dotfiles..."
+clone_dotfiles
 
 echo "Installing Oh My Zsh..."
 install_oh_my_zsh
