@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.0.1"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -56,6 +56,11 @@ function clone_dotfiles() {
     git clone https://github.com/zbejas/dotfiles.git ~/dotfiles
 }
 
+function force_clone_dotfiles() {
+    rm -rf ~/dotfiles
+    clone_dotfiles
+}
+
 function install_oh_my_zsh() {
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
@@ -86,9 +91,10 @@ function install_zoxide() {
 
 function check_script_version() {
     LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/main/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2)
+    INSTALLED_VERSION=$(cat ~/dotfiles/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2)
     
     # return 0 if the versions are the same
-    if [ "$SCRIPT_VERSION" == "$LATEST_VERSION" ]; then
+    if [ "$INSTALLED_VERSION" = "$LATEST_VERSION" ]; then
         return 0
     else
         return 1
@@ -102,24 +108,41 @@ function last_patches() {
         echo "Shell is already set to Zsh"
     fi
     
-    echo "Copying .zshrc..."
-    cp ~/dotfiles/zsh/.zshrc ~/.zshrc
+    read -p "Do you want to overwrite the current .zshrc file? (y/n): " CHOICE
+    
+    if [ "$CHOICE" = "y" ]; then
+        echo "Copying .zshrc..."
+        cp ~/dotfiles/zsh/.zshrc ~/.zshrc
+    else
+        echo "Skipping .zshrc overwrite"
+    fi
 }
 
 function check_if_installed() {
     if [ -d ~/dotfiles ]; then
         echo "Dotfiles are already cloned"
-        if [check_script_version -eq 0]; then
+        if [ $(check_script_version) -eq 0 ]; then
             echo "The script is up to date. Run anyway? (y/n)"
             read -p "Enter your choice: " CHOICE
             
-            if [ "$CHOICE" == "y" ]; then
+            if [ "$CHOICE" = "y" ]; then
                 return 0
             else
                 exit 0
             fi
         else
             echo "The script is outdated"
+            force_clone_dotfiles
+            
+            echo "Dotfiles have been updated. Runnning the script..."
+            
+            read -p "Install now? (y/n): " CHOICE
+            if [ "$CHOICE" = "y" ]; then
+                bash ~/dotfiles/install.sh
+                exit 0
+            else
+                exit 0
+            fi
         fi
     fi
 }
