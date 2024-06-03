@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.2"
+SCRIPT_VERSION="1.0.4"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -46,9 +46,9 @@ function update_repos() {
 
 function install_packages() {
     if [ "$BASE_DISTRO" == "Debian" ]; then
-        sudo apt install -y curl wget git zsh vim htop
+        sudo apt install -y curl wget git zsh vim htop btop
         elif [ "$BASE_DISTRO" == "Arch" ]; then
-        sudo pacman -S --noconfirm curl wget git zsh vim htop
+        sudo pacman -S --noconfirm curl wget git zsh vim htop btop
     fi
 }
 
@@ -86,7 +86,11 @@ function install_fzf() {
 }
 
 function install_zoxide() {
-    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+    if [ "$BASE_DISTRO" = "Debian" ]; then
+        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+        elif [ "$BASE_DISTRO" = "Arch" ]; then
+        sudo pacman -S --noconfirm zoxide
+    fi
 }
 
 function check_script_version() {
@@ -173,11 +177,11 @@ echo "Installing Zoxide..."
 install_zoxide
 
 echo "Downloading SSH key..."
-# check if key already exists
-if [ -f ~/.ssh/authorized_keys ]; then
-    echo "authorized_keys already exists, skipping..."
-else
+read -p "Do you want to download the SSH key? (y/N): " CHOICE
+if [ "$CHOICE" = "y" ]; then
     download_ssh_key
+else
+    echo "Skipping SSH key download"
 fi
 
 echo "Running last patches..."
