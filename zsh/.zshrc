@@ -1,9 +1,9 @@
 # Path to your oh-my-zsh installation.
-export ZSH="/home/zbe/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Paths
-path+=('/home/zbe/.local/bin')
-path+=('/home/zbe/.fzf/bin')
+path+=("$HOME/.local/bin")
+path+=("$HOME/.fzf/bin")
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="bira"

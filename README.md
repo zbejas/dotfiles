@@ -3,7 +3,7 @@
 
 This repository contains my personal dotfiles that I use to customize my console experience and other settings.
 
-**WARNING:** The install script adds my ssh key to your authorized keys. If you don't want that, you can remove the line from the script, or edit the `authorized_keys` file after the script has run.
+**WARNING:** The install script adds my ssh key to your authorized keys. It does ask for confirmation before doing so, but please be aware of this.
 
 ## Installation
 
