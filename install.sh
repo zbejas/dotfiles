@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.4"
+SCRIPT_VERSION="1.0.5"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -46,9 +46,9 @@ function update_repos() {
 
 function install_packages() {
     if [ "$BASE_DISTRO" == "Debian" ]; then
-        sudo apt install -y curl wget git zsh vim htop btop
+        sudo apt install -y curl wget git grc zsh vim htop btop
         elif [ "$BASE_DISTRO" == "Arch" ]; then
-        sudo pacman -S --noconfirm curl wget git zsh vim htop btop
+        sudo pacman -S --noconfirm curl wget git grc zsh vim htop btop
     fi
 }
 
@@ -117,7 +117,7 @@ function last_patches() {
     
     read -p "Do you want to overwrite the current .zshrc file? (y/N): " CHOICE
     
-    if [ "$CHOICE" = "y" ]; then
+    if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
         echo "Copying .zshrc..."
         cp ~/dotfiles/zsh/.zshrc ~/.zshrc
     else
@@ -137,7 +137,7 @@ function check_if_installed() {
             echo "Dotfiles have been updated. Runnning the script..."
             
             read -p "Install now? (y/N): " CHOICE
-            if [ "$CHOICE" = "y" ]; then
+           if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
                 bash ~/dotfiles/install.sh --skip-check
                 exit 0
             else
@@ -164,7 +164,11 @@ echo "Cloning dotfiles..."
 clone_dotfiles
 
 echo "Installing Oh My Zsh..."
+# make sure the user exits the shell, check if they read by pressing enter
+read -p "Please exit the Zsh shell after installation. Press Enter to continue..."
 install_oh_my_zsh
+
+
 
 echo "Installing Zsh plugins..."
 install_zsh_autosuggestions
@@ -178,8 +182,9 @@ install_zoxide
 
 echo "Downloading SSH key..."
 read -p "Do you want to download the SSH key? (y/N): " CHOICE
-if [ "$CHOICE" = "y" ]; then
+if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
     download_ssh_key
+fi
 else
     echo "Skipping SSH key download"
 fi
