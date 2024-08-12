@@ -137,7 +137,7 @@ function check_if_installed() {
             echo "Dotfiles have been updated. Runnning the script..."
             
             read -p "Install now? (y/N): " CHOICE
-           if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
+            if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
                 bash ~/dotfiles/install.sh --skip-check
                 exit 0
             else
@@ -165,7 +165,8 @@ clone_dotfiles
 
 echo "Installing Oh My Zsh..."
 # make sure the user exits the shell, check if they read by pressing enter
-read -p "Please exit the Zsh shell after installation. Press Enter to continue..."
+echo "!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!!!!"
+read -p "WARNING: Please exit the Zsh shell after installation by using the command 'exit'. Press Enter to continue..."
 install_oh_my_zsh
 
 
@@ -184,7 +185,6 @@ echo "Downloading SSH key..."
 read -p "Do you want to download the SSH key? (y/N): " CHOICE
 if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
     download_ssh_key
-fi
 else
     echo "Skipping SSH key download"
 fi
