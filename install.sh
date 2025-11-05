@@ -62,7 +62,8 @@ function force_clone_dotfiles() {
 }
 
 function install_oh_my_zsh() {
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    # Install Oh My Zsh unattended (don't run zsh, but do change shell)
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
 function install_zsh_autosuggestions() {
@@ -167,12 +168,7 @@ echo "Cloning dotfiles..."
 clone_dotfiles
 
 echo "Installing Oh My Zsh..."
-# make sure the user exits the shell, check if they read by pressing enter
-echo "!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!!!!"
-read -p "WARNING: Please exit the Zsh shell after installation by using the command 'exit'. Press Enter to continue..."
 install_oh_my_zsh
-
-
 
 echo "Installing Zsh plugins..."
 install_zsh_autosuggestions
