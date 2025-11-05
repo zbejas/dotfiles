@@ -74,7 +74,10 @@ function install_zsh_syntax_highlighting() {
 }
 
 function download_ssh_key() {
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
     curl -sSfL https://github.com/zbejas.keys >> ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
 }
 
 function install_fzf() {
