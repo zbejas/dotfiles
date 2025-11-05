@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.6"
+SCRIPT_VERSION="1.0.7"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -119,13 +119,13 @@ function last_patches() {
         echo "Shell is already set to Zsh"
     fi
     
-    read -p "Do you want to overwrite the current .zshrc file? (y/N): " CHOICE
+    read -p "Do you want to overwrite the current .zshrc file? (Y/n): " CHOICE
     
-    if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
+    if [ "$CHOICE" = "n" ] || [ "$CHOICE" = "N" ]; then
+        echo "Skipping .zshrc overwrite"
+    else
         echo "Copying .zshrc..."
         cp ~/dotfiles/zsh/.zshrc ~/.zshrc
-    else
-        echo "Skipping .zshrc overwrite"
     fi
 }
 
