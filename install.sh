@@ -94,7 +94,7 @@ function install_fzf() {
 
 function install_zoxide() {
     if [ "$BASE_DISTRO" = "Debian" ]; then
-        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --yes --bin-dir ~/.dotfiles/zoxide/bin
+        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --bin-dir ~/.dotfiles/zoxide/bin
         elif [ "$BASE_DISTRO" = "Arch" ]; then
         sudo pacman -S --noconfirm zoxide
     fi
