@@ -3,6 +3,7 @@
 SCRIPT_VERSION="1.1.0"
 DOWNLOAD_SSH_KEY="n"
 OVERWRITE_ZSHRC="y"
+START_DIR="$(pwd)"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -134,6 +135,8 @@ function last_patches() {
     else
         echo "Skipping .zshrc overwrite"
     fi
+    
+    cd "$START_DIR"
 }
 
 function check_if_installed() {
