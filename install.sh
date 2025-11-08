@@ -1,6 +1,8 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.7"
+SCRIPT_VERSION="1.1.0"
+DOWNLOAD_SSH_KEY="n"
+OVERWRITE_ZSHRC="y"
 
 # Detect the operating system
 if [ -f /etc/os-release ]; then
@@ -53,11 +55,11 @@ function install_packages() {
 }
 
 function clone_dotfiles() {
-    git clone https://github.com/zbejas/dotfiles.git ~/dotfiles
+    git clone https://github.com/zbejas/dotfiles.git ~/.dotfiles
 }
 
 function force_clone_dotfiles() {
-    rm -rf ~/dotfiles
+    rm -rf ~/.dotfiles
     clone_dotfiles
 }
 
@@ -83,7 +85,7 @@ function download_ssh_key() {
 
 function install_fzf() {
     if [ "$BASE_DISTRO" = "Debian" ]; then
-        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.dotfiles/fzf && ~/.dotfiles/fzf/install --all
         elif [ "$BASE_DISTRO" = "Arch" ]; then
         sudo pacman -S --noconfirm fzf
     fi
@@ -91,7 +93,7 @@ function install_fzf() {
 
 function install_zoxide() {
     if [ "$BASE_DISTRO" = "Debian" ]; then
-        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --yes --bin-dir ~/.dotfiles/zoxide/bin
         elif [ "$BASE_DISTRO" = "Arch" ]; then
         sudo pacman -S --noconfirm zoxide
     fi
@@ -99,7 +101,7 @@ function install_zoxide() {
 
 function check_script_version() {
     LATEST_VERSION=$(curl -sSfL https://raw.githubusercontent.com/zbejas/dotfiles/master/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
-    INSTALLED_VERSION=$(cat ~/dotfiles/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
+    INSTALLED_VERSION=$(cat ~/.dotfiles/install.sh | grep -o 'SCRIPT_VERSION=".*"' | cut -d'"' -f2 | head -n 1)
     
     echo "Installed version: $INSTALLED_VERSION"
     echo "Latest version: $LATEST_VERSION"
@@ -119,18 +121,23 @@ function last_patches() {
         echo "Shell is already set to Zsh"
     fi
     
-    read -p "Do you want to overwrite the current .zshrc file? (Y/n): " CHOICE
-    
-    if [ "$CHOICE" = "n" ] || [ "$CHOICE" = "N" ]; then
-        echo "Skipping .zshrc overwrite"
+    if [ "$DOWNLOAD_SSH_KEY" = "y" ]; then
+        echo "Downloading SSH key..."
+        download_ssh_key
     else
+        echo "Skipping SSH key download"
+    fi
+    
+    if [ "$OVERWRITE_ZSHRC" = "y" ]; then
         echo "Copying .zshrc..."
-        cp ~/dotfiles/zsh/.zshrc ~/.zshrc
+        cp ~/.dotfiles/zsh/.zshrc ~/.zshrc
+    else
+        echo "Skipping .zshrc overwrite"
     fi
 }
 
 function check_if_installed() {
-    if [ -d ~/dotfiles ]; then
+    if [ -d ~/.dotfiles ]; then
         echo "Dotfiles are already cloned"
         if check_script_version; then
             return 0
@@ -142,7 +149,7 @@ function check_if_installed() {
             
             read -p "Install now? (y/N): " CHOICE
             if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
-                bash ~/dotfiles/install.sh --skip-check
+                bash ~/.dotfiles/install.sh --skip-check
                 exit 0
             else
                 exit 0
@@ -156,6 +163,27 @@ if [ "$1" = "--skip-check" ]; then
     echo "Skipping check..."
 else
     check_if_installed
+fi
+
+# Ask user preferences upfront
+read -p "Do you want to download the SSH key? (y/N): " DOWNLOAD_SSH_KEY_INPUT
+read -p "Do you want to overwrite the current .zshrc file? (Y/n): " OVERWRITE_ZSHRC_INPUT
+
+# Apply defaults if user just pressed Enter
+if [ -z "$DOWNLOAD_SSH_KEY_INPUT" ]; then
+    DOWNLOAD_SSH_KEY="n"
+    elif [ "$DOWNLOAD_SSH_KEY_INPUT" = "y" ] || [ "$DOWNLOAD_SSH_KEY_INPUT" = "Y" ]; then
+    DOWNLOAD_SSH_KEY="y"
+else
+    DOWNLOAD_SSH_KEY="n"
+fi
+
+if [ -z "$OVERWRITE_ZSHRC_INPUT" ]; then
+    OVERWRITE_ZSHRC="y"
+    elif [ "$OVERWRITE_ZSHRC_INPUT" = "n" ] || [ "$OVERWRITE_ZSHRC_INPUT" = "N" ]; then
+    OVERWRITE_ZSHRC="n"
+else
+    OVERWRITE_ZSHRC="y"
 fi
 
 echo "Updating repositories..."
@@ -180,15 +208,8 @@ install_fzf
 echo "Installing Zoxide..."
 install_zoxide
 
-echo "Downloading SSH key..."
-read -p "Do you want to download the SSH key? (y/N): " CHOICE
-if [ "$CHOICE" = "y" ] || [ "$CHOICE" = "Y" ]; then
-    download_ssh_key
-else
-    echo "Skipping SSH key download"
-fi
-
 echo "Running last patches..."
 last_patches
 
 echo "Setup complete!"
+echo "Please restart your terminal or log out and log back in for all changes to take effect."
