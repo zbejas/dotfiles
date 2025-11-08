@@ -49,9 +49,9 @@ function update_repos() {
 
 function install_packages() {
     if [ "$BASE_DISTRO" == "Debian" ]; then
-        sudo apt install -y curl wget git grc zsh vim htop btop
+        sudo apt install -y curl wget git grc zsh vim btop
         elif [ "$BASE_DISTRO" == "Arch" ]; then
-        sudo pacman -S --noconfirm curl wget git grc zsh vim htop btop
+        sudo pacman -S --noconfirm curl wget git grc zsh vim btop
     fi
 }
 
@@ -85,19 +85,11 @@ function download_ssh_key() {
 }
 
 function install_fzf() {
-    if [ "$BASE_DISTRO" = "Debian" ]; then
-        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.dotfiles/fzf && ~/.dotfiles/fzf/install --all
-        elif [ "$BASE_DISTRO" = "Arch" ]; then
-        sudo pacman -S --noconfirm fzf
-    fi
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.dotfiles/fzf && ~/.dotfiles/fzf/install --all
 }
 
 function install_zoxide() {
-    if [ "$BASE_DISTRO" = "Debian" ]; then
-        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --bin-dir ~/.dotfiles/zoxide/bin
-        elif [ "$BASE_DISTRO" = "Arch" ]; then
-        sudo pacman -S --noconfirm zoxide
-    fi
+    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --bin-dir ~/.dotfiles/zoxide/bin
 }
 
 function check_script_version() {
