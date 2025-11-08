@@ -2,8 +2,8 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # Paths
-path+=("$HOME/.local/bin")
-path+=("$HOME/.fzf/bin")
+path+=("$HOME/.dotfiles/zoxide/bin")
+path+=("$HOME/.dotfiles/fzf/bin")
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="bira"
