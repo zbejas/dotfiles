@@ -11,7 +11,7 @@ ZSH_THEME="bira"
 # autosuggestions style
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#b2bec3,bg=underline"
 
-alias ll='grc ls -alh'
+alias ll='ls -alh'
 alias cd='z'
 alias cl='clear'
 alias compose='docker compose'
